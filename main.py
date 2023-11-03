@@ -1,7 +1,7 @@
 from tkinter import *
 from tkinter import font
 import numpy as np
-from martix import MatrixCalculator
+from matrixCalculator import MatrixCalculator
 
 
 class App:
