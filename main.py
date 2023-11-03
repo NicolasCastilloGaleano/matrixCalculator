@@ -1,5 +1,7 @@
 from tkinter import *
 from tkinter import font
+import numpy as np
+from martix import MatrixCalculator
 
 
 class App:
@@ -50,6 +52,9 @@ class App:
         # Frame que muestra la matriz sobre la uqe se va a trabajar
         self.matrix_frame = Frame(self.frame, bg="black")
         self.matrix_frame.grid(row=1,column=0, sticky=NSEW)
+        
+        self.test_button = Button(self.frame,command=self.calculate)
+        self.test_button.grid()
         self.resize_matrix()
         self.window.mainloop()
 
@@ -63,26 +68,52 @@ class App:
         self.window.option_add("*Entry*Foreground", "black") 
 
     def resize_matrix(self, *args):
+        self.matrix = []
+        self.Entries_matrix = []
         if (self.rowsEntry.get().isnumeric() and self.columnsEntry.get().isnumeric()):
-            self.current_rows = self.rowsEntry.get()
-            self.current_columns = self.columnsEntry.get()
-            self.clean_matrix()
+            self.current_rows = int(self.rowsEntry.get())
+            self.current_columns =int( self.columnsEntry.get())
+            self.clean_matrix_frame()
+            self.matrix = np.zeros((self.current_rows,self.current_columns),dtype=int)
             for row in range(int(self.current_rows)):
+                self.Entries_matrix.append([])
                 for col in range(int(self.current_columns)):
                     self.create_matrix_entry(self.matrix_frame, row, col)
         else:
+            self.current_rows = 3
+            self.current_columns =3
+            self.matrix = np.zeros((3,3),dtype=int)
             for row in range(3):
+                self.Entries_matrix.append([])
                 for col in range(3):
                     self.create_matrix_entry(self.matrix_frame, row, col)
+        self.matrix_calculator = MatrixCalculator(self.matrix,self.current_rows,self.current_columns)
+        
+        
+    def calculate(self):
+        # for row in range(self.current_rows):
+        #     row_items = ""
+        #     for col in range(self.current_columns):
+        #         row_items = row_items + " "+ self.Entries_matrix[row][col].get()
+        #     print(row_items)
+        #     row_items =""
+        
+        for row in range(self.current_rows):
+            for col in range(self.current_columns):
+                self.matrix_calculator.matrix[row][col] = int(self.Entries_matrix[row][col].get())
+        self.matrix_calculator.print_matrix()
+            
 
-    def clean_matrix(self):
+
+    def clean_matrix_frame(self):
         for widget in self.matrix_frame.winfo_children():
             widget.destroy()
 
     def create_matrix_entry(self, father, row, col):
         self.entry = Entry(father, width=5,justify="center")
+        self.entry.insert(0,self.matrix[row][col])
         self.entry.grid(column=col, row=row, sticky=NS, padx=1,pady=1)
-        return
+        self.Entries_matrix[row].append(self.entry)
         # Press the green button in the gutter to run the script.
 
         # See PyCharm help at https://www.jetbrains.com/help/pycharm/
